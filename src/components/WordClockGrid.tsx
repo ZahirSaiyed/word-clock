@@ -16,8 +16,40 @@ const WordClockGrid: React.FC = () => {
     ['T', 'E', 'N', 'S', 'E', 'O\'', 'C', 'L', 'O', 'C', 'K'],
   ];
 
+  const wordsMapping = {
+    'IT': { row: 0, col: 0 },
+    'IS': { row: 0, col: 3 },
+    'A': { row: 1, col: 0 },
+    'QUARTER': { row: 1, col: 2 },
+    'TWENTY': { row: 2, col: 1 },
+    'FIVE': { row: 2, col: 7 },
+    'HALF': { row: 3, col: 0 },
+    'TEN': { row: 3, col: 5 },
+    'TO': { row: 3, col: 9 },
+    'PAST': { row: 4, col: 0 },
+    'NINE': { row: 4, col: 7 },
+    'ONE': { row: 5, col: 0 },
+    'SIX': { row: 5, col: 4 },
+    'THREE': { row: 5, col: 7 },
+    'FOUR': { row: 6, col: 0 },
+    // 'FIVE2': { row: 6, col: 4 },
+    'TWO': { row: 6, col: 8 },
+    'EIGHT': { row: 7, col: 0 },
+    'ELEVEN': { row: 7, col: 5 },
+    'SEVEN': { row: 8, col: 0 },
+    'TWELVE': { row: 8, col: 5 },
+    // 'TEN2': { row: 9, col: 0 },
+    'OCLOCK': { row: 9, col: 5 },
+    // Add other words as needed
+  };
+
   type HourToGridType = {
     [key: number]: string;
+  };
+
+  type Position = {
+    row: number;
+    col: number;
   };
 
   // Function to determine the current time to the nearest hour
@@ -55,84 +87,92 @@ const WordClockGrid: React.FC = () => {
         11: 'ELEVEN',
         12: 'TWELVE'
       };
-
+      
       const hourString = hourToGrid[hour];
-      const lettersToHighlight = ['I', 'T', 'I', 'S', ...hourString.split(''), 'O', 'C', 'L', 'O', 'C', 'K'];
-  
+      const lettersToHighlight = ['IT', 'IS', hourString, 'OCLOCK'];
       return lettersToHighlight;
     };
 
   // Define the state for the highlighted letters
-  const [highlightedLetters, setHighlightedLetters] = useState<string[]>([]);
+  const [highlightedLetters, setHighlightedLetters] = useState<String[]>([]);
 
-  useEffect(() => {
+// Helper function to check if a position should be highlighted
+const isPositionHighlighted = (rowIndex: number, columnIndex: number): boolean => {
+  for (const word of highlightedLetters) {
+    // Check if the word exists in the mapping
+    if (typeof word === 'string' && word in wordsMapping) {
+      const startPos = wordsMapping[word as keyof typeof wordsMapping];
+
+      // Debugging: log the word and its start position
+      //console.log(`Word: ${word}, Start Position:`, startPos);
+
+      const wordLength = word.length;
+
+      if (
+        rowIndex === startPos.row &&
+        columnIndex >= startPos.col &&
+        columnIndex < startPos.col + wordLength
+      ) {
+        return true;
+      }
+    } else {
+      // If the word is not found in the mapping, log this information
+      console.log(`Word not found in mapping: ${word}`);
+    }
+  }
+  return false;
+};
+
+
+
+useEffect(() => {
+  const updateHighlightedWords = () => {
     const hour = getTimeToNearestHour();
     const lettersToHighlight = getHighlightedLetters(hour);
-    setHighlightedLetters(lettersToHighlight);
+    setHighlightedLetters(lettersToHighlight.map((letter) => letter.toString()));
+  };
 
-    // Update highlighted letters every minute
-    const intervalId = setInterval(() => {
-      const newHour = getTimeToNearestHour();
-      const newLettersToHighlight = getHighlightedLetters(newHour);
-      setHighlightedLetters(newLettersToHighlight);
-    }, 60000);
+  updateHighlightedWords(); // Initial update
+  const intervalId = setInterval(updateHighlightedWords, 60000); // Update every minute
 
-    return () => clearInterval(intervalId);
-  }, []);
-  
-  // // Function to handle letter click
-  // const handleLetterClick = (letter: string) => {
-  //   // Check if the letter is already highlighted
-  //   if (highlightedLetters.includes(letter)) {
-  //     // Remove the letter from the highlighted letters
-  //     setHighlightedLetters((prevHighlightedLetters) =>
-  //       prevHighlightedLetters.filter((l) => l !== letter)
-  //     );
-  //   } else {
-  //     // Add the letter to the highlighted letters
-  //     setHighlightedLetters((prevHighlightedLetters) => [...prevHighlightedLetters, letter]);
-  //   }
-  // };
+  return () => clearInterval(intervalId);
+}, []);
 
-  // // Function to handle clear all click
-  // const handleClearAllClick = () => {
-  //   // Clear all the highlighted letters
-  //   setHighlightedLetters([]);
-  // };
 
-  return (
-    <div>
-      {/* Render the grid of letters */}
-      {grid.map((row, rowIndex) => (
-        <div key={rowIndex} style={{ display: 'flex' }}>
-          {row.map((letter, columnIndex) => (
-            <div
-              key={columnIndex}
-              // onClick={() => handleLetterClick(letter)}
-              style={{
-                width: '30px',
-                height: '30px',
-                border: '1px solid black',
-                margin: '2px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                color: highlightedLetters.includes(letter) ? 'white' : 'grey',
-                backgroundColor: highlightedLetters.includes(letter) ? 'black' : 'transparent', // Add background color for highlighted letters
-              }}
-              role="button"
-              tabIndex={0}
-              // aria-pressed={highlightedLetters.includes(letter)}
-            >
-              {letter}
-            </div>
-          ))}
-        </div>
-      ))}
+    return (
+      <><div>Current Hour: {getTimeToNearestHour()}</div><div>
+        {/* Render the grid of letters */}
+        {grid.map((row, rowIndex) => (
+          <div key={rowIndex} style={{ display: 'flex' }}>
+            {row.map((letter, columnIndex) => {
+              // Check if this position should be highlighted
+              const highlight = isPositionHighlighted(rowIndex, columnIndex);
 
-      {/* Render the clear all button */}
-      {/* <button onClick={handleClearAllClick}>Clear All</button> */}
-    </div>
-  );
-};
+              return (
+                <div
+                  key={`${rowIndex}-${columnIndex}`}
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                    lineHeight: '30px',
+                    border: '1px solid black',
+                    margin: '2px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    color: highlight ? 'white' : 'grey',
+                    backgroundColor: highlight ? 'black' : 'transparent',
+                  }}
+                  tabIndex={0}
+                >
+                  {letter}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div></>
+      
+    );
+  };
 
 export default WordClockGrid;
