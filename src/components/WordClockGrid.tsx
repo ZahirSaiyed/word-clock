@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const WordClockGrid: React.FC = () => {
   // Define the grid of letters
@@ -16,28 +16,89 @@ const WordClockGrid: React.FC = () => {
     ['T', 'E', 'N', 'S', 'E', 'O\'', 'C', 'L', 'O', 'C', 'K'],
   ];
 
+  type HourToGridType = {
+    [key: number]: string;
+  };
+
+  // Function to determine the current time to the nearest hour
+  const getTimeToNearestHour = () => {
+    const now = new Date();
+    let hour = now.getHours();
+    const minute = now.getMinutes();
+    
+    // Adjust the hour if the time is 30 minutes past
+    if (minute >= 30) {
+      hour++;
+    }
+    
+    // Convert 24-hour time to 12-hour format
+    hour = hour % 12;
+    hour = hour === 0 ? 12 : hour; // Convert '0' hour to '12'
+
+    return hour;
+  };
+
+    // Function to create an array of letters that represent the current time to the nearest hour
+    const getHighlightedLetters = (hour: number) => {
+      // Map of hours to their respective strings on the grid
+      const hourToGrid:HourToGridType = {
+        1: 'ONE',
+        2: 'TWO',
+        3: 'THREE',
+        4: 'FOUR',
+        5: 'FIVE',
+        6: 'SIX',
+        7: 'SEVEN',
+        8: 'EIGHT',
+        9: 'NINE',
+        10: 'TEN',
+        11: 'ELEVEN',
+        12: 'TWELVE'
+      };
+
+      const hourString = hourToGrid[hour];
+      const lettersToHighlight = ['I', 'T', 'I', 'S', ...hourString.split(''), 'O', 'C', 'L', 'O', 'C', 'K'];
+  
+      return lettersToHighlight;
+    };
+
   // Define the state for the highlighted letters
   const [highlightedLetters, setHighlightedLetters] = useState<string[]>([]);
 
-  // Function to handle letter click
-  const handleLetterClick = (letter: string) => {
-    // Check if the letter is already highlighted
-    if (highlightedLetters.includes(letter)) {
-      // Remove the letter from the highlighted letters
-      setHighlightedLetters((prevHighlightedLetters) =>
-        prevHighlightedLetters.filter((l) => l !== letter)
-      );
-    } else {
-      // Add the letter to the highlighted letters
-      setHighlightedLetters((prevHighlightedLetters) => [...prevHighlightedLetters, letter]);
-    }
-  };
+  useEffect(() => {
+    const hour = getTimeToNearestHour();
+    const lettersToHighlight = getHighlightedLetters(hour);
+    setHighlightedLetters(lettersToHighlight);
 
-  // Function to handle clear all click
-  const handleClearAllClick = () => {
-    // Clear all the highlighted letters
-    setHighlightedLetters([]);
-  };
+    // Update highlighted letters every minute
+    const intervalId = setInterval(() => {
+      const newHour = getTimeToNearestHour();
+      const newLettersToHighlight = getHighlightedLetters(newHour);
+      setHighlightedLetters(newLettersToHighlight);
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+  
+  // // Function to handle letter click
+  // const handleLetterClick = (letter: string) => {
+  //   // Check if the letter is already highlighted
+  //   if (highlightedLetters.includes(letter)) {
+  //     // Remove the letter from the highlighted letters
+  //     setHighlightedLetters((prevHighlightedLetters) =>
+  //       prevHighlightedLetters.filter((l) => l !== letter)
+  //     );
+  //   } else {
+  //     // Add the letter to the highlighted letters
+  //     setHighlightedLetters((prevHighlightedLetters) => [...prevHighlightedLetters, letter]);
+  //   }
+  // };
+
+  // // Function to handle clear all click
+  // const handleClearAllClick = () => {
+  //   // Clear all the highlighted letters
+  //   setHighlightedLetters([]);
+  // };
 
   return (
     <div>
@@ -47,7 +108,7 @@ const WordClockGrid: React.FC = () => {
           {row.map((letter, columnIndex) => (
             <div
               key={columnIndex}
-              onClick={() => handleLetterClick(letter)}
+              // onClick={() => handleLetterClick(letter)}
               style={{
                 width: '30px',
                 height: '30px',
@@ -56,10 +117,11 @@ const WordClockGrid: React.FC = () => {
                 textAlign: 'center',
                 cursor: 'pointer',
                 color: highlightedLetters.includes(letter) ? 'white' : 'grey',
+                backgroundColor: highlightedLetters.includes(letter) ? 'black' : 'transparent', // Add background color for highlighted letters
               }}
               role="button"
               tabIndex={0}
-              aria-pressed={highlightedLetters.includes(letter)}
+              // aria-pressed={highlightedLetters.includes(letter)}
             >
               {letter}
             </div>
@@ -68,7 +130,7 @@ const WordClockGrid: React.FC = () => {
       ))}
 
       {/* Render the clear all button */}
-      <button onClick={handleClearAllClick}>Clear All</button>
+      {/* <button onClick={handleClearAllClick}>Clear All</button> */}
     </div>
   );
 };
