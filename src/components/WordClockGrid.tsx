@@ -53,10 +53,9 @@ const WordClockGrid: React.FC = () => {
                 height: '30px',
                 border: '1px solid black',
                 margin: '2px',
-                backgroundColor: highlightedLetters.includes(letter) ? 'yellow' : 'white',
                 textAlign: 'center',
                 cursor: 'pointer',
-                color: 'black',
+                color: highlightedLetters.includes(letter) ? 'white' : 'grey',
               }}
               role="button"
               tabIndex={0}
