@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 
 const WordClockGrid: React.FC = () => {
   // Define the grid of letters
