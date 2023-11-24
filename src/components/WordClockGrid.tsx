@@ -1,4 +1,5 @@
 'use client';
+import { minify } from 'next/dist/build/swc';
 import React, { useState, useEffect } from 'react';
 
 const WordClockGrid: React.FC = () => {
@@ -22,9 +23,9 @@ const WordClockGrid: React.FC = () => {
     'A': { row: 1, col: 0 },
     'QUARTER': { row: 1, col: 2 },
     'TWENTY': { row: 2, col: 1 },
-    'FIVE': { row: 2, col: 7 },
+    'FIVE2': { row: 2, col: 6 },
     'HALF': { row: 3, col: 0 },
-    'TEN': { row: 3, col: 5 },
+    'TEN2': { row: 3, col: 5 },
     'TO': { row: 3, col: 9 },
     'PAST': { row: 4, col: 0 },
     'NINE': { row: 4, col: 7 },
@@ -32,13 +33,13 @@ const WordClockGrid: React.FC = () => {
     'SIX': { row: 5, col: 4 },
     'THREE': { row: 5, col: 7 },
     'FOUR': { row: 6, col: 0 },
-    // 'FIVE2': { row: 6, col: 4 },
+    'FIVE': { row: 6, col: 4 },
     'TWO': { row: 6, col: 8 },
     'EIGHT': { row: 7, col: 0 },
     'ELEVEN': { row: 7, col: 5 },
     'SEVEN': { row: 8, col: 0 },
     'TWELVE': { row: 8, col: 5 },
-    // 'TEN2': { row: 9, col: 0 },
+    'TEN': { row: 9, col: 0 },
     'OCLOCK': { row: 9, col: 5 },
     // Add other words as needed
   };
@@ -58,21 +59,76 @@ const WordClockGrid: React.FC = () => {
     let hour = now.getHours();
     const minute = now.getMinutes();
     
+      // Logic to decide which minute phrase to use
+  let minutePhrase = '';
+  if (minute < 5) {
+    minutePhrase = 'OCLOCK';
+  } else if (minute < 7) {
+    minutePhrase = 'FIVE PAST';
+  } else if (minute < 15) {
+    minutePhrase = 'TEN PAST';
+  }
+  else if (minute < 20) {
+    minutePhrase = 'QUARTER PAST';
+  }
+  else if (minute < 30) {
+    minutePhrase = 'TWENTY PAST';
+  } else if (minute < 35) {
+    minutePhrase = 'HALF PAST';
+  } else if (minute < 45) {
+    minutePhrase = 'TWENTY TO';
+    hour++;
+  } else if (minute < 50) {
+    minutePhrase = 'QUARTER TO';
+    hour++;
+  }
+  else if (minute < 55) {
+    minutePhrase = 'TEN2 TO';
+    hour++;
+  } else {
+    minutePhrase = 'FIVE2 TO';
+    hour++;
+  }
+
     // Adjust the hour if the time is 30 minutes past
-    if (minute >= 30) {
-      hour++;
-    }
+    // if (minute >= 30) {
+    //   hour++;
+    // }
     
     // Convert 24-hour time to 12-hour format
     hour = hour % 12;
     hour = hour === 0 ? 12 : hour; // Convert '0' hour to '12'
 
-    return hour;
+    // return hour;
+    return { hour, minutePhrase };
   };
 
-    // Function to create an array of letters that represent the current time to the nearest hour
-    const getHighlightedLetters = (hour: number) => {
-      // Map of hours to their respective strings on the grid
+  // Function to create an array of letters that represent the current time to the nearest hour
+  // const getHighlightedLetters = (hour: number) => {
+  //     // Map of hours to their respective strings on the grid
+  //     const hourToGrid:HourToGridType = {
+  //       1: 'ONE',
+  //       2: 'TWO',
+  //       3: 'THREE',
+  //       4: 'FOUR',
+  //       5: 'FIVE',
+  //       6: 'SIX',
+  //       7: 'SEVEN',
+  //       8: 'EIGHT',
+  //       9: 'NINE',
+  //       10: 'TEN',
+  //       11: 'ELEVEN',
+  //       12: 'TWELVE'
+  //     };
+      
+      
+  //     const hourString = hourToGrid[hour];
+  //     const lettersToHighlight = ['IT', 'IS', hourString, 'OCLOCK'];
+  //     return lettersToHighlight;
+  // };
+
+  const getHighlightedLetters = (time: { hour: any; minutePhrase: any; }) => {
+     //     // Map of hours to their respective strings on the grid
       const hourToGrid:HourToGridType = {
         1: 'ONE',
         2: 'TWO',
@@ -87,25 +143,29 @@ const WordClockGrid: React.FC = () => {
         11: 'ELEVEN',
         12: 'TWELVE'
       };
-      
-      const hourString = hourToGrid[hour];
-      const lettersToHighlight = ['IT', 'IS', hourString, 'OCLOCK'];
-      return lettersToHighlight;
-    };
+    const { hour, minutePhrase } = time;
+    const hourString = hourToGrid[hour];
+    //const hourPosition = wordsMapping[hourString as keyof typeof wordsMapping];
+
+    let minuteWords = minutePhrase.split(' ');
+    let minutePositions = minuteWords.map((word: string | number) => wordsMapping[word as keyof typeof wordsMapping]);
+    console.log(minutePositions);
+    return ["IT", "IS", ...minuteWords, hourString];
+  };
 
   // Define the state for the highlighted letters
   const [highlightedLetters, setHighlightedLetters] = useState<String[]>([]);
 
-// Helper function to check if a position should be highlighted
-const isPositionHighlighted = (rowIndex: number, columnIndex: number): boolean => {
-  for (const word of highlightedLetters) {
+  // Helper function to check if a position should be highlighted
+  const isPositionHighlighted = (rowIndex: number, columnIndex: number): boolean => {
+  for (let word of highlightedLetters) {
     // Check if the word exists in the mapping
     if (typeof word === 'string' && word in wordsMapping) {
       const startPos = wordsMapping[word as keyof typeof wordsMapping];
 
       // Debugging: log the word and its start position
       //console.log(`Word: ${word}, Start Position:`, startPos);
-
+      word = word.replace('2', ''); // Remove the '2' from 'FIVE2' for the length check
       const wordLength = word.length;
 
       if (
@@ -115,17 +175,17 @@ const isPositionHighlighted = (rowIndex: number, columnIndex: number): boolean =
       ) {
         return true;
       }
-    } else {
-      // If the word is not found in the mapping, log this information
-      console.log(`Word not found in mapping: ${word}`);
-    }
+    } 
+    // else {
+    //   // If the word is not found in the mapping, log this information
+    //   console.log(`Word not found in mapping: ${word}`);
+    // }
   }
   return false;
-};
+  };
 
-
-
-useEffect(() => {
+  // Update the highlighted letters every minute
+  useEffect(() => {
   const updateHighlightedWords = () => {
     const hour = getTimeToNearestHour();
     const lettersToHighlight = getHighlightedLetters(hour);
@@ -136,11 +196,10 @@ useEffect(() => {
   const intervalId = setInterval(updateHighlightedWords, 60000); // Update every minute
 
   return () => clearInterval(intervalId);
-}, []);
+  }, []);
 
-
-    return (
-      <><div>Current Hour: {getTimeToNearestHour()}</div><div>
+  return (
+      <><div>Current Hour: {getTimeToNearestHour().hour} {getTimeToNearestHour().minutePhrase}</div><div>
         {/* Render the grid of letters */}
         {grid.map((row, rowIndex) => (
           <div key={rowIndex} style={{ display: 'flex' }}>
@@ -172,7 +231,7 @@ useEffect(() => {
         ))}
       </div></>
       
-    );
-  };
+  );
+};
 
 export default WordClockGrid;
