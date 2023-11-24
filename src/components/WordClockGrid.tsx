@@ -199,7 +199,7 @@ const WordClockGrid: React.FC = () => {
   }, []);
 
   return (
-      <><div>Current Hour: {getTimeToNearestHour().hour} {getTimeToNearestHour().minutePhrase}</div><div>
+    <div>
         {/* Render the grid of letters */}
         {grid.map((row, rowIndex) => (
           <div key={rowIndex} style={{ display: 'flex' }}>
@@ -229,8 +229,7 @@ const WordClockGrid: React.FC = () => {
             })}
           </div>
         ))}
-      </div></>
-      
+      </div>
   );
 };
 
