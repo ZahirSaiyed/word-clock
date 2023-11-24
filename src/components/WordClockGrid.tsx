@@ -1,5 +1,4 @@
 'use client';
-import { minify } from 'next/dist/build/swc';
 import React, { useState, useEffect } from 'react';
 
 const WordClockGrid: React.FC = () => {
