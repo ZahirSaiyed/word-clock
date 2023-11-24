@@ -157,18 +157,6 @@ const WordClockGrid: React.FC = () => {
   return () => clearInterval(intervalId);
   }, []);
 
-  // Adjust the style dynamically based on screen width
-const getDynamicStyle = () => {
-  const isMobile = window.innerWidth < 480; // Example breakpoint for mobile devices
-  return {
-    width: isMobile ? '30px' : '50px',
-    height: isMobile ? '30px' : '50px',
-    lineHeight: isMobile ? '30px' : '50px',
-    fontSize: isMobile ? '15px' : '20px',
-    // Other styles remain the same
-  };
-};
-
   return (
     <div>
         {/* Render the grid of letters */}
@@ -177,17 +165,15 @@ const getDynamicStyle = () => {
             {row.map((letter, columnIndex) => {
               // Check if this position should be highlighted
               const highlight = isPositionHighlighted(rowIndex, columnIndex);
-              const dynamicStyle = getDynamicStyle(); // Get dynamic style based on screen size
 
               return (
                 <div
                   key={`${rowIndex}-${columnIndex}`}
                   style={{
-                    // width: '50px', 
-                    // height: '50px',
-                    // lineHeight: '50px', 
-                    // fontSize: '20px', 
-                    ...dynamicStyle, 
+                    width: '50px', 
+                    height: '50px',
+                    lineHeight: '50px', 
+                    fontSize: '20px', 
                     border: '1px solid black',
                     margin: '2px',
                     textAlign: 'center',
