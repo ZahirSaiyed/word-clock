@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 
 const WordClockGrid: React.FC = () => {
   // Define the grid of letters
@@ -170,10 +171,14 @@ const WordClockGrid: React.FC = () => {
                 <div
                   key={`${rowIndex}-${columnIndex}`}
                   style={{
-                    width: '50px',
-                    height: '50px',
-                    lineHeight: '50px',
-                    fontSize: '20px',
+                    // width: '50px',
+                    // height: '50px',
+                    // lineHeight: '50px',
+                    // fontSize: '20px',
+                    width: '3.5vmax',
+                    height: '3.5vmax',
+                    lineHeight: '4vmax',
+                    fontSize: '1.7vmax',
                     border: '1px solid black',
                     margin: '2px',
                     textAlign: 'center',
