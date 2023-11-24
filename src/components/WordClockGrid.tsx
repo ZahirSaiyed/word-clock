@@ -157,6 +157,8 @@ const WordClockGrid: React.FC = () => {
   return () => clearInterval(intervalId);
   }, []);
 
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 600 : false;
+
   return (
     <div>
         {/* Render the grid of letters */}
@@ -170,10 +172,10 @@ const WordClockGrid: React.FC = () => {
                 <div
                   key={`${rowIndex}-${columnIndex}`}
                   style={{
-                    width: '50px', 
-                    height: '50px',
-                    lineHeight: '50px', 
-                    fontSize: '20px', 
+                    width: isMobile ? '30px' : '50px',
+                    height: isMobile ? '30px' : '50px',
+                    lineHeight: isMobile ? '30px' : '50px',
+                    fontSize: isMobile ? '15px' : '20px',
                     border: '1px solid black',
                     margin: '2px',
                     textAlign: 'center',
