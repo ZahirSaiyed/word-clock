@@ -65,7 +65,7 @@ const WordClockGrid: React.FC = () => {
     minutePhrase = 'OCLOCK';
   } else if (minute < 7) {
     minutePhrase = 'FIVE2 PAST';
-  } else if (minute < 15) {
+  } else if (minute < 13) {
     minutePhrase = 'TEN2 PAST';
   }
   else if (minute < 20) {
@@ -211,15 +211,19 @@ const WordClockGrid: React.FC = () => {
                 <div
                   key={`${rowIndex}-${columnIndex}`}
                   style={{
-                    width: '30px',
-                    height: '30px',
-                    lineHeight: '30px',
+                    width: '50px', // Adjusted for new font size
+                    height: '50px', // Adjusted for new font size
+                    lineHeight: '50px', // Adjusted for new font size
+                    fontSize: '20px', // Increased font size
                     border: '1px solid black',
                     margin: '2px',
                     textAlign: 'center',
                     cursor: 'pointer',
                     color: highlight ? 'white' : 'grey',
                     backgroundColor: highlight ? 'black' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center', // Helps with vertical centering
+                    justifyContent: 'center', // Helps with horizontal centering
                   }}
                   tabIndex={0}
                 >
