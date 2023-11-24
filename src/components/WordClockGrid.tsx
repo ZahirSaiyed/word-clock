@@ -64,9 +64,9 @@ const WordClockGrid: React.FC = () => {
   if (minute < 5) {
     minutePhrase = 'OCLOCK';
   } else if (minute < 7) {
-    minutePhrase = 'FIVE PAST';
+    minutePhrase = 'FIVE2 PAST';
   } else if (minute < 15) {
-    minutePhrase = 'TEN PAST';
+    minutePhrase = 'TEN2 PAST';
   }
   else if (minute < 20) {
     minutePhrase = 'QUARTER PAST';
