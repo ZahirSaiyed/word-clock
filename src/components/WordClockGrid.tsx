@@ -48,11 +48,6 @@ const WordClockGrid: React.FC = () => {
     [key: number]: string;
   };
 
-  type Position = {
-    row: number;
-    col: number;
-  };
-
   // Function to determine the current time to the nearest hour
   const getTimeToNearestHour = () => {
     const now = new Date();
@@ -71,7 +66,7 @@ const WordClockGrid: React.FC = () => {
   else if (minute < 20) {
     minutePhrase = 'QUARTER PAST';
   }
-  else if (minute < 30) {
+  else if (minute < 26) {
     minutePhrase = 'TWENTY PAST';
   } else if (minute < 35) {
     minutePhrase = 'HALF PAST';
@@ -89,11 +84,6 @@ const WordClockGrid: React.FC = () => {
     minutePhrase = 'FIVE2 TO';
     hour++;
   }
-
-    // Adjust the hour if the time is 30 minutes past
-    // if (minute >= 30) {
-    //   hour++;
-    // }
     
     // Convert 24-hour time to 12-hour format
     hour = hour % 12;
@@ -102,30 +92,6 @@ const WordClockGrid: React.FC = () => {
     // return hour;
     return { hour, minutePhrase };
   };
-
-  // Function to create an array of letters that represent the current time to the nearest hour
-  // const getHighlightedLetters = (hour: number) => {
-  //     // Map of hours to their respective strings on the grid
-  //     const hourToGrid:HourToGridType = {
-  //       1: 'ONE',
-  //       2: 'TWO',
-  //       3: 'THREE',
-  //       4: 'FOUR',
-  //       5: 'FIVE',
-  //       6: 'SIX',
-  //       7: 'SEVEN',
-  //       8: 'EIGHT',
-  //       9: 'NINE',
-  //       10: 'TEN',
-  //       11: 'ELEVEN',
-  //       12: 'TWELVE'
-  //     };
-      
-      
-  //     const hourString = hourToGrid[hour];
-  //     const lettersToHighlight = ['IT', 'IS', hourString, 'OCLOCK'];
-  //     return lettersToHighlight;
-  // };
 
   const getHighlightedLetters = (time: { hour: any; minutePhrase: any; }) => {
      //     // Map of hours to their respective strings on the grid
@@ -163,8 +129,6 @@ const WordClockGrid: React.FC = () => {
     if (typeof word === 'string' && word in wordsMapping) {
       const startPos = wordsMapping[word as keyof typeof wordsMapping];
 
-      // Debugging: log the word and its start position
-      //console.log(`Word: ${word}, Start Position:`, startPos);
       word = word.replace('2', ''); // Remove the '2' from 'FIVE2' for the length check
       const wordLength = word.length;
 
@@ -176,10 +140,6 @@ const WordClockGrid: React.FC = () => {
         return true;
       }
     } 
-    // else {
-    //   // If the word is not found in the mapping, log this information
-    //   console.log(`Word not found in mapping: ${word}`);
-    // }
   }
   return false;
   };
@@ -211,10 +171,10 @@ const WordClockGrid: React.FC = () => {
                 <div
                   key={`${rowIndex}-${columnIndex}`}
                   style={{
-                    width: '50px', // Adjusted for new font size
-                    height: '50px', // Adjusted for new font size
-                    lineHeight: '50px', // Adjusted for new font size
-                    fontSize: '20px', // Increased font size
+                    width: '50px', 
+                    height: '50px',
+                    lineHeight: '50px', 
+                    fontSize: '20px', 
                     border: '1px solid black',
                     margin: '2px',
                     textAlign: 'center',
