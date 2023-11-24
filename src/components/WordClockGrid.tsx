@@ -22,7 +22,7 @@ const WordClockGrid: React.FC = () => {
     'IS': { row: 0, col: 3 },
     'A': { row: 1, col: 0 },
     'QUARTER': { row: 1, col: 2 },
-    'TWENTY': { row: 2, col: 1 },
+    'TWENTY': { row: 2, col: 0 },
     'FIVE2': { row: 2, col: 6 },
     'HALF': { row: 3, col: 0 },
     'TEN2': { row: 3, col: 5 },
